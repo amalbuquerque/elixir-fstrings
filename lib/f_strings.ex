@@ -3,8 +3,6 @@ defmodule FStrings do
   Documentation for `FStrings`.
   """
 
-  @dummy_acc []
-
   @doc """
   ~f sigil for f-strings.
 
@@ -41,19 +39,27 @@ defmodule FStrings do
   #  ]}
   defp evaluate_and_replace_expressions(literal_string) when is_binary(literal_string), do: literal_string
 
-  defp evaluate_and_replace_expressions({:<<>>, _meta, _string_elements} = ast) do
-    {new_ast, _acc} = Macro.prewalk(ast, @dummy_acc, fn
+  defp evaluate_and_replace_expressions({:<<>>, meta, string_elements}) do
+    new_string_elements = Enum.reduce(string_elements, [], fn
       literal_string, acc when is_binary(literal_string) ->
-        {literal_string, acc}
+        [literal_string | acc]
 
-      {:"::", _meta, interpolation_args} = x, acc ->
-        IO.inspect(interpolation_args, label: "INTERPOLATION ARGS")
-        {x, acc}
+      # the interpolation always comes with ":: binary" appended to it
+      {:"::", _meta, [interpolation_stuff, {:binary, _, _}]} = interpolation_element, acc ->
+        prefix = "BLABLA="
+        # TODO: process interpolation_stuff with Macro.to_string to get a string representation of the expression inside #{...}
+        IO.inspect(interpolation_stuff, label: "INTERPOLATION STUFF")
+
+        # prefix after since we'll reverse it later  ;
+        [interpolation_element, prefix | acc]
 
       other, acc ->
-        {other, acc}
+        [other | acc]
     end)
 
-    new_ast
+    z = {:<<>>, meta, Enum.reverse(new_string_elements)}
+
+    IO.inspect(z, label: "AFTER manipulation")
+    z
   end
 end
