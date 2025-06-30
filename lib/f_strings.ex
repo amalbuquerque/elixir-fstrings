@@ -45,24 +45,24 @@ defmodule FStrings do
         [literal_string | acc]
 
       # the interpolation always comes with ":: binary" appended to it
-      {:"::", _meta, [interpolation_stuff, {:binary, _, _}]} = interpolation_element, acc ->
-        prefix = "BLABLA="
-
-        interpolation_stuff
+      {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
+        interpolated_expression
         |> Macro.to_string()
         |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
 
-        {_always_present_kernel_to_string, _meta, [interpolated_stuff]} = interpolation_stuff
+        {_always_present_kernel_to_string, _meta, [interpolated_stuff]} = interpolated_expression
         IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
 
-        interpolated_stuff
-        |> Macro.to_string()
-        |> IO.inspect(label: "TO STRING INTERPOLATED STUFF")
+        expression_equals = interpolated_stuff
+          |> Macro.to_string()
+          |> wrap_in_quotes()
+          |> Kernel.<>("=")
 
-        IO.inspect(interpolation_stuff, label: "INTERPOLATION STUFF")
+        IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
 
-        # prefix after since we'll reverse it later
-        [interpolation_element, prefix | acc]
+        # expression_equals as last element since we'll reverse it later
+        # we wrap the interpolated expression with quotes to clearly show its value
+        ["'", interpolation_ast, "'", expression_equals | acc]
 
       other, acc ->
         [other | acc]
@@ -73,4 +73,6 @@ defmodule FStrings do
     IO.inspect(z, label: "AFTER manipulation")
     z
   end
+
+  defp wrap_in_quotes(string), do: "'#{string}'"
 end
