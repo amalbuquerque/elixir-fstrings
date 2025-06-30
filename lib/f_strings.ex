@@ -47,10 +47,21 @@ defmodule FStrings do
       # the interpolation always comes with ":: binary" appended to it
       {:"::", _meta, [interpolation_stuff, {:binary, _, _}]} = interpolation_element, acc ->
         prefix = "BLABLA="
-        # TODO: process interpolation_stuff with Macro.to_string to get a string representation of the expression inside #{...}
+
+        interpolation_stuff
+        |> Macro.to_string()
+        |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
+
+        {_always_present_kernel_to_string, _meta, [interpolated_stuff]} = interpolation_stuff
+        IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
+
+        interpolated_stuff
+        |> Macro.to_string()
+        |> IO.inspect(label: "TO STRING INTERPOLATED STUFF")
+
         IO.inspect(interpolation_stuff, label: "INTERPOLATION STUFF")
 
-        # prefix after since we'll reverse it later  ;
+        # prefix after since we'll reverse it later
         [interpolation_element, prefix | acc]
 
       other, acc ->
