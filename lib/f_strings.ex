@@ -13,8 +13,6 @@ defmodule FStrings do
 
   """
   defmacro sigil_f(quoted_string, _modifiers) do
-    IO.inspect(quoted_string, label: "SIGILED")
-
     evaluate_and_replace_expressions(quoted_string)
   end
 
@@ -46,19 +44,19 @@ defmodule FStrings do
 
       # the interpolation always comes with ":: binary" appended to it
       {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
-        interpolated_expression
-        |> Macro.to_string()
-        |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
+        # interpolated_expression
+        # |> Macro.to_string()
+        # |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
 
         {_always_present_kernel_to_string, _meta, [interpolated_stuff]} = interpolated_expression
-        IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
+        # IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
 
         expression_equals = interpolated_stuff
           |> Macro.to_string()
           |> wrap_in_quotes()
           |> Kernel.<>("=")
 
-        IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
+        # IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
 
         # expression_equals as last element since we'll reverse it later
         # we wrap the interpolated expression with quotes to clearly show its value
@@ -68,10 +66,7 @@ defmodule FStrings do
         [other | acc]
     end)
 
-    z = {:<<>>, meta, Enum.reverse(new_string_elements)}
-
-    IO.inspect(z, label: "AFTER manipulation")
-    z
+    {:<<>>, meta, Enum.reverse(new_string_elements)}
   end
 
   defp wrap_in_quotes(string), do: "'#{string}'"
