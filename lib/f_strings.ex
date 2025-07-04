@@ -8,7 +8,9 @@ defmodule FStrings do
 
   ## Examples
 
-      iex> abc=3; FStrings.sigil_f("hello world \#{abc}")
+      iex> abc=3
+      iex> require FStrings
+      iex> FStrings.sigil_f("hello world \#{abc}", [])
       "hello world 'abc'='3'"
 
   """
@@ -35,36 +37,41 @@ defmodule FStrings do
   #     ]},
   #    " ffff"
   #  ]}
-  defp evaluate_and_replace_expressions(literal_string) when is_binary(literal_string), do: literal_string
+  defp evaluate_and_replace_expressions(literal_string) when is_binary(literal_string),
+    do: literal_string
 
   defp evaluate_and_replace_expressions({:<<>>, meta, string_elements}) do
-    new_string_elements = Enum.reduce(string_elements, [], fn
-      literal_string, acc when is_binary(literal_string) ->
-        [literal_string | acc]
+    new_string_elements =
+      Enum.reduce(string_elements, [], fn
+        literal_string, acc when is_binary(literal_string) ->
+          [literal_string | acc]
 
-      # the interpolation always comes with ":: binary" appended to it
-      {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
-        # interpolated_expression
-        # |> Macro.to_string()
-        # |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
+        # the interpolation always comes with ":: binary" appended to it
+        {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
+          # interpolated_expression
+          # |> Macro.to_string()
+          # |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
 
-        {_always_present_kernel_to_string, _meta, [interpolated_stuff]} = interpolated_expression
-        # IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
+          {_always_present_kernel_to_string, _meta, [interpolated_stuff]} =
+            interpolated_expression
 
-        expression_equals = interpolated_stuff
-          |> Macro.to_string()
-          |> wrap_in_quotes()
-          |> Kernel.<>("=")
+          # IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
 
-        # IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
+          expression_equals =
+            interpolated_stuff
+            |> Macro.to_string()
+            |> wrap_in_quotes()
+            |> Kernel.<>("=")
 
-        # expression_equals as last element since we'll reverse it later
-        # we wrap the interpolated expression with quotes to clearly show its value
-        ["'", interpolation_ast, "'", expression_equals | acc]
+          # IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
 
-      other, acc ->
-        [other | acc]
-    end)
+          # expression_equals as last element since we'll reverse it later
+          # we wrap the interpolated expression with quotes to clearly show its value
+          ["'", interpolation_ast, "'", expression_equals | acc]
+
+        other, acc ->
+          [other | acc]
+      end)
 
     {:<<>>, meta, Enum.reverse(new_string_elements)}
   end
