@@ -39,4 +39,11 @@ defmodule FStringsTest do
 
     assert ~f"->#{abc * 2 + 3}<-" == "->'abc * 2 + 3'='87'<-"
   end
+
+  test "interpolates multiple expressions" do
+    abc = 42.0
+    bar = 2
+
+    assert ~f"#{abc * 2 + 3} < #{Float.pow(abc, bar)}" == "'abc * 2 + 3'='87.0' < 'Float.pow(abc, bar)'='1764.0'"
+  end
 end

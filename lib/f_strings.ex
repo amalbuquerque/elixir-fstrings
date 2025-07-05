@@ -48,22 +48,15 @@ defmodule FStrings do
 
         # the interpolation always comes with ":: binary" appended to it
         {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
-          # interpolated_expression
-          # |> Macro.to_string()
-          # |> IO.inspect(label: "STRINGED INTERPOLATION STUFF")
 
           {_always_present_kernel_to_string, _meta, [interpolated_stuff]} =
             interpolated_expression
-
-          # IO.inspect(interpolated_stuff, label: "INTERPOLATED STUFF")
 
           expression_equals =
             interpolated_stuff
             |> Macro.to_string()
             |> wrap_in_quotes()
             |> Kernel.<>("=")
-
-          # IO.inspect(interpolated_expression, label: "INTERPOLATED EXPRESSION")
 
           # expression_equals as last element since we'll reverse it later
           # we wrap the interpolated expression with quotes to clearly show its value
