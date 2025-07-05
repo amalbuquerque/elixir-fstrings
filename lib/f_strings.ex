@@ -41,14 +41,17 @@ defmodule FStrings do
     do: literal_string
 
   defp evaluate_and_replace_expressions({:<<>>, meta, string_elements}) do
-    new_string_elements =
-      Enum.reduce(string_elements, [], fn
-        literal_string, acc when is_binary(literal_string) ->
-          [literal_string | acc]
+    eval_and_replace =
+      Enum.reduce(string_elements, %{processed: [], result: []}, fn
+        literal_string, %{processed: processed, result: result} = acc
+        when is_binary(literal_string) ->
+          acc
+          |> Map.put(:result, [literal_string | result])
+          |> Map.put(:processed, [literal_string | processed])
 
         # the interpolation always comes with ":: binary" appended to it
-        {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast, acc ->
-
+        {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast,
+        %{processed: processed, result: result} = acc ->
           {_always_present_kernel_to_string, _meta, [interpolated_stuff]} =
             interpolated_expression
 
@@ -58,15 +61,19 @@ defmodule FStrings do
             |> wrap_in_quotes()
             |> Kernel.<>("=")
 
+          acc
           # expression_equals as last element since we'll reverse it later
           # we wrap the interpolated expression with quotes to clearly show its value
-          ["'", interpolation_ast, "'", expression_equals | acc]
+          |> Map.put(:result, ["'", interpolation_ast, "'", expression_equals | result])
+          |> Map.put(:processed, [interpolation_ast | processed])
 
-        other, acc ->
-          [other | acc]
+        other, %{processed: processed, result: result} = acc ->
+          acc
+          |> Map.put(:result, [other | result])
+          |> Map.put(:processed, [other | processed])
       end)
 
-    {:<<>>, meta, Enum.reverse(new_string_elements)}
+    {:<<>>, meta, Enum.reverse(eval_and_replace.result)}
   end
 
   defp wrap_in_quotes(string), do: "'#{string}'"
