@@ -10,8 +10,8 @@ defmodule FStrings do
 
       iex> abc=3
       iex> require FStrings
-      iex> FStrings.sigil_f("hello world \#{abc}", [])
-      "hello world 'abc'='3'"
+      iex> FStrings.sigil_f("hello world \#{abc}= \#{abc}", [])
+      "hello world 'abc'='3' 3"
 
   """
   defmacro sigil_f(quoted_string, _modifiers) do
@@ -41,13 +41,54 @@ defmodule FStrings do
     do: literal_string
 
   defp evaluate_and_replace_expressions({:<<>>, meta, string_elements}) do
+    total_string_elements = length(string_elements)
+
     eval_and_replace =
       Enum.reduce(string_elements, %{processed: [], result: []}, fn
+        # a string element starting with '==' means a single '=' should be kept ("escaped" equals), no fancy interpolation before
+        "==" <> remaining_string, %{processed: [_ | _] = processed, result: result} = acc ->
+          last_processed = hd(processed)
+          # we take the transformed interpolation out from the result so far
+          [quote, _interpolation_ast, quote, _expression_equals | rest_result] = result
+
+          # we don't want to keep the transformed interpolation,
+          # so we place the last processed in the result instead
+          acc
+          |> Map.put(:result, ["=" <> remaining_string, last_processed | rest_result])
+          |> Map.put(:processed, ["=" <> remaining_string | processed])
+
+        # a string element starting with '=' means no '=' should be kept, keep the transformed interpolation
+        "=" <> remaining_string, %{processed: [_ | _] = processed, result: result} = acc ->
+          # we don't want to keep the transformed interpolation, so we place the last processed
+          acc
+          |> Map.put(:result, [remaining_string | result])
+          |> Map.put(:processed, ["=" <> remaining_string | processed])
+
+        # when no '=' starts the string element, it means the interpolation of
+        # the previous element is the vanilla one, so we drop the transformed interpolation
+        literal_string, %{processed: [_ | _] = processed, result: result} = acc
+        when is_binary(literal_string) ->
+          last_processed = hd(processed)
+          [quote, _interpolation_ast, quote, _expression_equals | rest_result] = result
+
+          acc
+          |> Map.put(:result, [literal_string, last_processed | rest_result])
+          |> Map.put(:processed, [literal_string | processed])
+
         literal_string, %{processed: processed, result: result} = acc
         when is_binary(literal_string) ->
           acc
           |> Map.put(:result, [literal_string | result])
           |> Map.put(:processed, [literal_string | processed])
+
+        # when processing an interpolation as the last string element, it means it's a vanilla interpolation
+        # (since there can't be a trailing '=' sign)
+        {:"::", _meta, _interpolation_expression} = interpolation_ast,
+        %{processed: processed, result: result} = acc
+        when length(processed) + 1 == total_string_elements ->
+          acc
+          |> Map.put(:result, [interpolation_ast | result])
+          |> Map.put(:processed, [interpolation_ast | processed])
 
         # the interpolation always comes with ":: binary" appended to it
         {:"::", _meta, [interpolated_expression, {:binary, _, _}]} = interpolation_ast,
