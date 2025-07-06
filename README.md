@@ -1,6 +1,22 @@
-# FStrings
+# F-Strings
 
-**TODO: Add description**
+A library that aims to provide some of the features that [Python F-strings have](https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals).
+
+It currently allows the usage of the `=` specifier after the interpolation, meaning that it will
+expand the interpolated expression to the text of the expression, an equal sign, then
+the representation of the evaluated expression. Both the text and the evaluated expression
+are wrapped in single quotes.
+
+```elixir
+iex(1)> import FStrings
+FStrings
+
+iex(2)> world = "Jupiter"
+"Jupiter"
+
+iex(3)> ~f"Hello, #{world}="
+"Hello, 'world'='Jupiter'"
+```
 
 ## Installation
 

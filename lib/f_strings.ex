@@ -9,8 +9,8 @@ defmodule FStrings do
   ## Examples
 
       iex> abc=3
-      iex> require FStrings
-      iex> FStrings.sigil_f("hello world \#{abc}= \#{abc}", [])
+      iex> import FStrings
+      iex> sigil_f("hello world \#{abc}= \#{abc}", [])
       "hello world 'abc'='3' 3"
 
   """
