@@ -11,12 +11,9 @@ defmodule FStrings do
   ## Examples
 
       iex> import FStrings
-
       iex> abc=3
-
       iex> ~f"The value 🎉 \#{abc}="
       "The value 🎉 'abc'='3'"
-
       iex> sigil_f("hello world \#{abc}= \#{abc}", [])
       "hello world 'abc'='3' 3"
 
