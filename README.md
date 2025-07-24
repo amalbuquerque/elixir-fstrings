@@ -18,10 +18,37 @@ iex(3)> ~f"Hello, #{world}="
 "Hello, 'world'='Jupiter'"
 ```
 
+### Use it with Logger
+
+This kind of interpolation where we want the actual expression to be present in the string is usually needed for logging. To help with that, you can use the `FStrings.Logger` module that will allow you to use the F-string interpolation without having to specify the `~f"..."` sigil 😎
+
+
+```elixir
+use FStrings.Logger
+
+foo = 42
+
+Logger.info("Important value #{foo}=")
+```
+
+The last statement will log `Important value 'foo'='42'`, note the F-string interpolation without having to specify the `~f` sigil.
+
+## TODO
+
+1. [ ] Allow modifiers to be passed to the sigil to control the wrapping character:
+  - 'x' for no wrapping,
+  - 'q' for quotes,
+  - 'p' for parentheses,
+  - 's' for square brackets,
+  - 'c' for curly brackets
+
+2. [ ] Allow `wrap_in` option to be passed to `use FStrings.Logger` for the default wrapping character
+
+3. [ ] Allow `x|q|p|s|c` to be passed before `=` to set different wrapping character for single interpolation
+
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `f_strings` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `f_strings` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -30,8 +57,3 @@ def deps do
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/f_strings>.
-
