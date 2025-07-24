@@ -11,7 +11,12 @@ defmodule FStrings.MixProject do
       name: "F-strings",
       source_url: "https://github.com/amalbuquerque/elixir-fstrings",
       homepage_url: "https://github.com/amalbuquerque/elixir-fstrings",
-      docs: &docs/0
+      docs: &docs/0,
+      description: "Library for F-strings interpolation",
+      package: [
+        licenses: ["MIT"],
+        links: []
+      ]
     ]
   end
 

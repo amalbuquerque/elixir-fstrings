@@ -60,6 +60,8 @@ def deps do
 end
 ```
 
+It will be fetched from [hex.pm](https://hex.pm): https://hex.pm/packages/f_strings
+
 ## Changelog 📆
 
 ### **v0.1.0 (2025-07-24)**
