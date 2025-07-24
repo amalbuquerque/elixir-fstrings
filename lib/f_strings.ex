@@ -1,6 +1,8 @@
 defmodule FStrings do
   @moduledoc """
-  Documentation for `FStrings`.
+  `FStrings` module that provides the `~f"..."` sigil to be able to do F-strings-like interpolation.
+
+  Check [this](README.md) for an intro and instructions on how to use it.
   """
 
   @doc """
@@ -8,8 +10,13 @@ defmodule FStrings do
 
   ## Examples
 
-      iex> abc=3
       iex> import FStrings
+
+      iex> abc=3
+
+      iex> ~f"The value 🎉 \#{abc}="
+      "The value 🎉 'abc'='3'"
+
       iex> sigil_f("hello world \#{abc}= \#{abc}", [])
       "hello world 'abc'='3' 3"
 

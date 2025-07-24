@@ -1,5 +1,7 @@
 # F-Strings
 
+## Intro 🔭
+
 A library that aims to provide some of the features that [Python F-strings have](https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals).
 
 It currently allows the usage of the `=` specifier after the interpolation, meaning that it will
@@ -16,6 +18,18 @@ iex(2)> world = "Jupiter"
 
 iex(3)> ~f"Hello, #{world}="
 "Hello, 'world'='Jupiter'"
+
+iex(4)> ~f"Hello, #{world}"
+# no trailing `=` means regular interpolation
+"Hello, Jupiter"
+```
+
+If you really want to have an `=` immediately after the interpolation, use double equals (ie. `==`) to get a single equals:
+
+```elixir
+iex(5)> ~f"Hello, #{world}==biggest!"
+# trailing `==` means regular interpolation, with an equals symbol immediately after it.
+"Hello, Jupiter=biggest!"
 ```
 
 ### Use it with Logger
@@ -29,24 +43,12 @@ use FStrings.Logger
 foo = 42
 
 Logger.info("Important value #{foo}=")
+# Important value 'foo'='42'
 ```
 
-The last statement will log `Important value 'foo'='42'`, note the F-string interpolation without having to specify the `~f` sigil.
+The last statement will log `Important value 'foo'='42'`; note the F-string interpolation without having to specify the `~f` sigil.
 
-## TODO
-
-1. [ ] Allow modifiers to be passed to the sigil to control the wrapping character:
-  - 'x' for no wrapping,
-  - 'q' for quotes,
-  - 'p' for parentheses,
-  - 's' for square brackets,
-  - 'c' for curly brackets
-
-2. [ ] Allow `wrap_in` option to be passed to `use FStrings.Logger` for the default wrapping character
-
-3. [ ] Allow `x|q|p|s|c` to be passed before `=` to set different wrapping character for single interpolation
-
-## Installation
+## Installation 💾
 
 The package can be installed by adding `f_strings` to your list of dependencies in `mix.exs`:
 
@@ -57,3 +59,24 @@ def deps do
   ]
 end
 ```
+
+## Changelog 📆
+
+### **v0.1.0 (2025-07-24)**
+- First version
+    * Ready to be used, always wraps F-string interpolation in quotes
+    * Provides `FStrings.Logger` to facilitate interpolation of `Logger` messages
+
+## Next steps 🚧
+
+1. `[ ]` Allow modifiers to be passed to the sigil to control the wrapping character:
+  - 'x' for no wrapping,
+  - 'q' for quotes,
+  - 'p' for parentheses,
+  - 's' for square brackets,
+  - 'c' for curly brackets
+
+2. `[ ]` Allow `wrap_in` option to be passed to `use FStrings.Logger` for the default wrapping character
+
+3. `[ ]` Allow `x|q|p|s|c` to be passed before `=` to set different wrapping character for single interpolation
+

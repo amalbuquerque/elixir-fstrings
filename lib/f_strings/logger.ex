@@ -4,10 +4,10 @@ defmodule FStrings.Logger do
 
   Use it like this:
 
+  ```elixir
     iex> use FStrings.Logger
     iex> abc = 42
-    iex> IO.puts("Uncomment next line, FIX THIS")
-    iex> # Logger.info(~f"This is the meaning of life \#{abc}=")
+    iex> Logger.info(~f"This is the meaning of life \#{abc}=")
     # Will log an info message: "This is the meaning of life 'abc'='42'"
   ```
   """
@@ -25,6 +25,11 @@ defmodule FStrings.Logger do
     end
   end
 
+  @doc """
+  A wrapper around `Logger.info/2` to be able to use the F-string interpolation without having to specify the `~f"..."` sigil.
+
+  Accepts the exact same arguments. Check `Logger.info/2` docs for more info.
+  """
   defmacro info(message_or_fun, metadata \\ [])
 
   defmacro info({:<<>>, _metadata, _concatenated_stuff} = quoted_string, metadata) do
@@ -42,6 +47,11 @@ defmodule FStrings.Logger do
     end
   end
 
+  @doc """
+  A wrapper around `Logger.warning/2` to be able to use the F-string interpolation without having to specify the `~f"..."` sigil.
+
+  Accepts the exact same arguments. Check `Logger.warning/2` docs for more info.
+  """
   defmacro warning(message_or_fun, metadata \\ [])
 
   defmacro warning({:<<>>, _metadata, _concatenated_stuff} = quoted_string, metadata) do
@@ -59,6 +69,11 @@ defmodule FStrings.Logger do
     end
   end
 
+  @doc """
+  A wrapper around `Logger.error/2` to be able to use the F-string interpolation without having to specify the `~f"..."` sigil.
+
+  Accepts the exact same arguments. Check `Logger.error/2` docs for more info.
+  """
   defmacro error(message_or_fun, metadata \\ [])
 
   defmacro error({:<<>>, _metadata, _concatenated_stuff} = quoted_string, metadata) do
