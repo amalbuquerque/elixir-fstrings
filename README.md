@@ -1,5 +1,7 @@
 # F-Strings
 
+[![Build Status](https://github.com/amalbuquerque/elixir-fstrings/actions/workflows/elixir.yml/badge.svg)](https://github.com/amalbuquerque/elixir-fstrings/actions/workflows/elixir.yml) [![Hex.pm](https://img.shields.io/hexpm/v/f_strings.svg)](https://hex.pm/packages/f_strings) [![Documentation](https://img.shields.io/badge/documentation-blue)](https://hexdocs.pm/f_strings)
+
 ## Intro 🔭
 
 A library that aims to provide some of the features that [Python F-strings have](https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals).
