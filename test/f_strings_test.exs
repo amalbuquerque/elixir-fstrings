@@ -1,5 +1,6 @@
 defmodule FStringsTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
+
   import FStrings
   import ExUnit.CaptureIO
 
